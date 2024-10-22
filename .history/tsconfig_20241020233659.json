@@ -1,0 +1,11 @@
+
+{
+  "compilerOptions": {
+    "baseUrl": "./", // 解析非相对模块的基地址，默认是当前目录
+    "module": "esnext",// 支持 import.meta
+    "paths": { //路径映射，相对于baseUrl
+      "@/*": ["src/*"] 
+    },
+    "allowSyntheticDefaultImports": true // 允许默认导入
+  } 
+}

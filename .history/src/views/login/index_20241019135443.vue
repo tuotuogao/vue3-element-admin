@@ -1,0 +1,25 @@
+<template>
+  <div class="login-container">
+    <!-- 登录表单 -->
+    <div class="login-content">
+        <div class="login-image">
+        <el-image :src="loginImage" style="width: 210px; height: 210px" />
+      </div>
+      <div class="login-box"></div>
+    </div>
+  </div>
+  <div>登录页面</div>
+
+</template>
+<script>
+export default {
+  components: {},
+  props: {},
+  setup(props, context) {},
+  mounted() {
+    console.log("1");
+    
+  },
+};
+</script>
+<style scoped></style>

@@ -1,0 +1,39 @@
+{
+  "name": "vue3-element-admin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "element-plus": "^2.8.5",
+    "path-to-regexp": "^6.3.0",
+    "pinia": "^2.2.4",
+    "vue": "^3.5.11",
+    "vue-i18n": "9.9.1",
+    "vue-router": "^4.4.5",
+    "vue3-element-admin": "file:"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.6",
+    "@vitejs/plugin-vue": "^5.1.4",
+    "fast-glob": "^3.2.11",
+    "postcss": "8.4.47",
+    "sass": "^1.79.5",
+    "typescript": "^5.6.3",
+    "unocss": "^0.63.4",
+    "unplugin-auto-import": "^0.18.3",
+    "unplugin-icons": "^0.19.3",
+    "unplugin-vue-components": "^0.27.4",
+    "vite": "^5.4.8",
+    "vite-plugin-svg-icons": "^2.0.1",
+    "vue-tsc": "^2.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
