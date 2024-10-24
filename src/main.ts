@@ -4,7 +4,7 @@ import App from './App.vue'
 import setupPlugins from "@/plugins"
 import 'virtual:uno.css'
 import defaultSettings from './settings';
-console.log(defaultSettings);
+// console.log(defaultSettings);
 
 // 样式
 // src/main.ts

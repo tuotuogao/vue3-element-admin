@@ -23,15 +23,18 @@
         <lang-select class="ml-2 cursor-pointer" />
       </div>
     </div>
-    <p>嘿嘿嘿</p>
-    <div>阿巴巴巴</div>
     <!-- 登录表单 -->
     <div class="login-content">
       <div class="login-image">
         <el-image :src="loginImage" style="width: 210px; height: 210px" />
       </div>
       <div class="login-box">
-        <el-form ref="loginFormRef" class="login-form">
+        <el-form
+          ref="loginFormRef"
+          :model="loginData"
+          :rules="loginRules"
+          class="login-form"
+        >
           <h2 class="text-xl font-medium text-center flex-center relative">
             {{ $t("login.login") }}
             <!-- 登录 -->
@@ -65,8 +68,17 @@
           <!-- 用户名 -->
           <el-form-item prop="username">
             <div class="input-wrapper">
-              <el-icon class="mx-2"> </el-icon>
-              <el-input ref="username" size="large" class="h-[48px]"></el-input>
+              <el-icon class="mx-2">
+                <User />
+              </el-icon>
+              <el-input
+                ref="username"
+                v-model="loginData.username"
+                :placeholder="$t('login.username')"
+                name="username"
+                size="large"
+                class="h-[48px]"
+              ></el-input>
             </div>
           </el-form-item>
           <!-- 密码 -->
@@ -77,6 +89,7 @@
                   <Lock />
                 </el-icon>
                 <el-input
+                  :placeholder="$t('login.password')"
                   type="password"
                   name="password"
                   size="large"
@@ -86,8 +99,68 @@
               </div>
             </el-form-item>
           </el-tooltip>
+          <!-- 验证码 -->
+          <el-form-item>
+            <div class="input-wrapper">
+              <svg-icon icon-class="captcha" class="mx-2" />
+              <el-input
+                auto-complete="off"
+                size="large"
+                :placeholder="$t('login.captchaCode')"
+                class="flex-1"
+              />
+              <el-image
+                :src="captchaBase64"
+                class="captcha-image"
+                @click="getCaptcha"
+              />
+            </div>
+          </el-form-item>
+          <div class="flex-x-between w-full py-1">
+            <el-checkbox>
+              {{ $t("login.rememberMe") }}
+            </el-checkbox>
+
+            <el-link type="primary" href="/forget-password">
+              {{ $t("login.forgetPassword") }}
+            </el-link>
+          </div>
+          <el-button
+            :loading="loading"
+            type="primary"
+            size="large"
+            class="w-full"
+          >
+            {{ $t("login.login") }}
+          </el-button>
+
+          <el-divider>
+            <span class="text-12px">{{ $t("login.otherLoginMethods") }}</span>
+          </el-divider>
+
+          <!-- 第三方登录 -->
+          <div class="flex-x-center text-lg color-gray-5">
+            <svg-icon icon-class="wechat" class="cursor-pointer" />
+            <svg-icon icon-class="qq" class="cursor-pointer ml-5" />
+            <svg-icon icon-class="github" class="cursor-pointer ml-5" />
+            <svg-icon icon-class="gitee" class="cursor-pointer ml-5" />
+          </div>
         </el-form>
       </div>
+    </div>
+    <!-- ICP备案 -->
+    <div class="absolute bottom-0 w-full text-center text-12px">
+      <p>
+        Copyright © 2021 - 2024 youlai.tech All Rights Reserved.
+        <a
+          href="http://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:underline"
+        >
+          皖ICP备20006496号-2
+        </a>
+      </p>
     </div>
   </div>
 </template>
@@ -98,7 +171,16 @@ import { reactive, ref } from "vue";
 import type { FormInstance } from "element-plus";
 import { ThemeEnum } from "@/enums/ThemeEnum";
 import "../../styles/login.scss";
-// import "@/assets/icons"
+import AuthAPI, { type LoginData } from "@/api/auth";
+// 内部依赖
+import { useSettingsStore } from "@/store";
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+// 是否大写锁定
+const isCapslock = ref(false);
+// 验证码图片Base64字符串
+const captchaBase64 = ref();
 const numberValidateForm = reactive({
   age: "",
 });
@@ -120,8 +202,6 @@ const resetForm = (formEl: FormInstance | undefined) => {
 };
 const formRef = ref<FormInstance>();
 
-// 内部依赖
-import { useSettingsStore } from "@/store";
 const logo = ref(new URL("../../assets/logo.png", import.meta.url).href);
 const loginImage = ref(
   new URL("../assets/../../assets/images/login-image.svg", import.meta.url).href
@@ -130,6 +210,16 @@ const loginImage = ref(
 // const userStore = useUserStore();
 const settingsStore = useSettingsStore();
 const route = useRoute();
+//
+const loginData = ref<LoginData>({
+  username: "admin",
+  password: "123456",
+  captchaKey: "",
+  captchaCode: "",
+});
+// 按钮 loading 状态
+const loading = ref(false);
+
 // 登录表单ref
 const loginFormRef = ref<FormInstance>();
 // 是否显示暗黑模式
@@ -140,6 +230,72 @@ const toggleTheme = () => {
     settingsStore.theme === ThemeEnum.DARK ? ThemeEnum.LIGHT : ThemeEnum.DARK;
   settingsStore.changeTheme(newTheme);
 };
+const loginRules = computed(() => {
+  return {
+    username: [
+      {
+        required: true,
+        trigger: "blur",
+        message: t("login.message.username.required"),
+      },
+    ],
+    password: [
+      {
+        required: true,
+        trigger: "blur",
+        message: t("login.message.password.required"),
+      },
+      {
+        min: 6,
+        message: t("login.message.password.min"),
+        trigger: "blur",
+      },
+    ],
+    captchaCode: [
+      {
+        required: true,
+        trigger: "blur",
+        message: t("login.message.captchaCode.required"),
+      },
+    ],
+  };
+});
+/** 获取验证码 */
+function getCaptcha() {
+  AuthAPI.getCaptcha().then((data) => {
+    loginData.value.captchaKey = data.captchaKey;
+    captchaBase64.value = data.captchaBase64;
+  });
+}
+// /** 登录表单提交 */
+// function handleLoginSubmit() {
+//   loginFormRef.value?.validate((valid: boolean) => {
+//     if (valid) {
+//       loading.value = true;
+//       userStore
+//         .login(loginData.value)
+//         .then(() => {
+//           const { path, queryParams } = parseRedirect();
+//           router.push({ path: path, query: queryParams });
+//         })
+//         .catch(() => {
+//           getCaptcha();
+//         })
+//         .finally(() => {
+//           loading.value = false;
+//         });
+//     }
+//   });
+// }
+/** 设置登录凭证 */
+const setLoginCredentials = (username: string, password: string) => {
+  loginData.value.username = username;
+  loginData.value.password = password;
+};
+
+onMounted(() => {
+  getCaptcha();
+});
 </script>
 <style lang="scss" scoped></style>
 

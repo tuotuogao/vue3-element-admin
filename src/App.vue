@@ -15,11 +15,9 @@
   </div>
   <HelloWorld msg="Vite + Vue" />
   <h1 class="red"> cueufisdjfkljas</h1> -->
-  <div>
-    <router-view>
+    <router-view/>
       
-  </router-view>
-  </div>
+
 </template>
 
 <style scoped>

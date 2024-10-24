@@ -21,6 +21,6 @@
       "@/*": ["src/*"] 
     },
   },
-  "include": ["mock/**/*.ts", "src/**/*.ts", "src/**/*.vue", "vite.config.ts"],
+  "include": ["mock/**/*.ts", "src/**/*.ts", "src/**/*.vue", "vite.config.ts","auto-imports.d.ts","components.d.ts"],
  
 }
