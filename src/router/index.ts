@@ -9,9 +9,15 @@ import login from "../views/login/index.vue"
 export const constantRoutes:RouteRecordRaw[]=[
     {
         path: "/",
+        name:"login",
         component: login,
         // meta: { hidden: true },    
       },
+      {
+        path:'/layout',
+        name:'layout',
+        component: ()=>import("@/views/layout/index.vue"),
+      }
 ]
 const router = createRouter({
     history: createWebHashHistory(),

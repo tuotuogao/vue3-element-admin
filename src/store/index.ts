@@ -10,4 +10,6 @@ export function setupStore(app: App<Element>) {
 
 
 export * from "./modules/settings";
+export * from "./modules/user";
+
 export { store };

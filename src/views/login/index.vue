@@ -24,7 +24,7 @@
       </div>
     </div>
     <!-- 登录表单 -->
-    <div class="login-content">
+    <div class="login-content">      
       <div class="login-image">
         <el-image :src="loginImage" style="width: 210px; height: 210px" />
       </div>
@@ -81,20 +81,29 @@
               ></el-input>
             </div>
           </el-form-item>
+
           <!-- 密码 -->
-          <el-tooltip placement="right">
+          <el-tooltip
+            :visible="isCapslock"
+            :content="$t('login.capsLock')"
+            placement="right"
+          >
             <el-form-item prop="password">
               <div class="input-wrapper">
                 <el-icon class="mx-2">
                   <Lock />
                 </el-icon>
                 <el-input
+                  v-model="loginData.password"
                   :placeholder="$t('login.password')"
                   type="password"
                   name="password"
                   size="large"
                   class="h-[48px] pr-2"
                   show-password
+                  @keyup="checkCapslock"
+                  @keyup.enter="handleLoginSubmit"
+
                 />
               </div>
             </el-form-item>
@@ -104,10 +113,13 @@
             <div class="input-wrapper">
               <svg-icon icon-class="captcha" class="mx-2" />
               <el-input
+              v-model="loginData.captchaCode"
                 auto-complete="off"
                 size="large"
                 :placeholder="$t('login.captchaCode')"
                 class="flex-1"
+                @keyup.enter="handleLoginSubmit"
+
               />
               <el-image
                 :src="captchaBase64"
@@ -125,14 +137,19 @@
               {{ $t("login.forgetPassword") }}
             </el-link>
           </div>
-          <el-button
-            :loading="loading"
-            type="primary"
-            size="large"
-            class="w-full"
-          >
-            {{ $t("login.login") }}
-          </el-button>
+
+          
+            <!-- 登录按钮 -->
+            <el-button
+              :loading="loading"
+              type="primary"
+              size="large"
+              class="w-full"
+              @click.prevent="handleLoginSubmit"
+            >
+              {{ $t("login.login") }}
+            </el-button>
+          
 
           <el-divider>
             <span class="text-12px">{{ $t("login.otherLoginMethods") }}</span>
@@ -173,8 +190,11 @@ import { ThemeEnum } from "@/enums/ThemeEnum";
 import "../../styles/login.scss";
 import AuthAPI, { type LoginData } from "@/api/auth";
 // 内部依赖
-import { useSettingsStore } from "@/store";
-import { useI18n } from 'vue-i18n';
+import { useI18n } from "vue-i18n";
+import { useSettingsStore, useUserStore } from "@/store";
+import router from "@/router";
+import { LocationQuery, useRoute } from "vue-router";
+const userStore = useUserStore();
 
 const { t } = useI18n();
 // 是否大写锁定
@@ -185,22 +205,22 @@ const numberValidateForm = reactive({
   age: "",
 });
 
-const submitForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.validate((valid) => {
-    if (valid) {
-      console.log("submit!");
-    } else {
-      console.log("error submit!");
-    }
-  });
-};
+// const submitForm = (formEl: FormInstance | undefined) => {
+//   if (!formEl) return;
+//   formEl.validate((valid) => {
+//     if (valid) {
+//       console.log("submit!");
+//     } else {
+//       console.log("error submit!");
+//     }
+//   });
+// };
 
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.resetFields();
-};
-const formRef = ref<FormInstance>();
+// const resetForm = (formEl: FormInstance | undefined) => {
+//   if (!formEl) return;
+//   formEl.resetFields();
+// };
+// const formRef = ref<FormInstance>();
 
 const logo = ref(new URL("../../assets/logo.png", import.meta.url).href);
 const loginImage = ref(
@@ -263,35 +283,61 @@ const loginRules = computed(() => {
 /** 获取验证码 */
 function getCaptcha() {
   AuthAPI.getCaptcha().then((data) => {
+    console.log(data)
     loginData.value.captchaKey = data.captchaKey;
     captchaBase64.value = data.captchaBase64;
   });
 }
-// /** 登录表单提交 */
-// function handleLoginSubmit() {
-//   loginFormRef.value?.validate((valid: boolean) => {
-//     if (valid) {
-//       loading.value = true;
-//       userStore
-//         .login(loginData.value)
-//         .then(() => {
-//           const { path, queryParams } = parseRedirect();
-//           router.push({ path: path, query: queryParams });
-//         })
-//         .catch(() => {
-//           getCaptcha();
-//         })
-//         .finally(() => {
-//           loading.value = false;
-//         });
-//     }
-//   });
-// }
+// console.log(captchaBase64.value)
+/** 登录表单提交 */
+function handleLoginSubmit() {
+  loginFormRef.value?.validate((valid: boolean) => {
+    if (valid) {
+      loading.value = true;
+      userStore.login(loginData.value)
+        .then(() => {
+          const { path, queryParams } = parseRedirect();
+          router.push({ path: path, query: queryParams });
+        })
+        .catch(() => {
+          getCaptcha();
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    }
+  });
+}
+/** 解析 redirect 字符串 为 path 和  queryParams */
+function parseRedirect(): {
+  path: string;
+  queryParams: Record<string, string>;
+} {
+  const query: LocationQuery = route.query;
+  const redirect = (query.redirect as string) ?? "/";
+
+  const url = new URL(redirect, window.location.origin);
+  const path = url.pathname;
+  const queryParams: Record<string, string> = {};
+
+  url.searchParams.forEach((value, key) => {
+    queryParams[key] = value;
+  });
+
+  return { path, queryParams };
+}
 /** 设置登录凭证 */
 const setLoginCredentials = (username: string, password: string) => {
   loginData.value.username = username;
   loginData.value.password = password;
 };
+/** 检查输入大小写 */
+function checkCapslock(event: KeyboardEvent) {
+  // 防止浏览器密码自动填充时报错
+  if (event instanceof KeyboardEvent) {
+    isCapslock.value = event.getModifierState("CapsLock");
+  }
+}
 
 onMounted(() => {
   getCaptcha();

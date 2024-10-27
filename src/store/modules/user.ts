@@ -16,55 +16,55 @@ export const useUserStore = defineStore("user", () => {
    * @param {LoginData}
    * @returns
    */
-  // function login(loginData: LoginData) {
-  //   return new Promise<void>((resolve, reject) => {
-  //     AuthAPI.login(loginData)
-  //       .then((data) => {
-  //         const { tokenType, accessToken } = data;
-  //         setToken(tokenType + " " + accessToken); // Bearer eyJhbGciOiJIUzI1NiJ9.xxx.xxx
-  //         resolve();
-  //       })
-  //       .catch((error) => {
-  //         reject(error);
-  //       });
-  //   });
-  // }
+  function login(loginData: LoginData) {
+    return new Promise<void>((resolve, reject) => {
+      AuthAPI.login(loginData)
+        .then((data) => {
+          const { tokenType, accessToken } = data;
+          setToken(tokenType + " " + accessToken); // Bearer eyJhbGciOiJIUzI1NiJ9.xxx.xxx
+          resolve();
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
 
   // 获取信息(用户昵称、头像、角色集合、权限集合)
-  // function getUserInfo() {
-  //   return new Promise<UserInfo>((resolve, reject) => {
-  //     UserAPI.getInfo()
-  //       .then((data) => {
-  //         if (!data) {
-  //           reject("Verification failed, please Login again.");
-  //           return;
-  //         }
-  //         if (!data.roles || data.roles.length <= 0) {
-  //           reject("getUserInfo: roles must be a non-null array!");
-  //           return;
-  //         }
-  //         Object.assign(user.value, { ...data });
-  //         resolve(data);
-  //       })
-  //       .catch((error) => {
-  //         reject(error);
-  //       });
-  //   });
-  // }
+  function getUserInfo() {
+    return new Promise<UserInfo>((resolve, reject) => {
+      UserAPI.getInfo()
+        .then((data) => {
+          if (!data) {
+            reject("Verification failed, please Login again.");
+            return;
+          }
+          if (!data.roles || data.roles.length <= 0) {
+            reject("getUserInfo: roles must be a non-null array!");
+            return;
+          }
+          Object.assign(user.value, { ...data });
+          resolve(data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
 
   // user logout
-  // function logout() {
-  //   return new Promise<void>((resolve, reject) => {
-  //     AuthAPI.logout()
-  //       .then(() => {
-  //         location.reload(); // 清空路由
-  //         resolve();
-  //       })
-  //       .catch((error) => {
-  //         reject(error);
-  //       });
-  //   });
-  // }
+  function logout() {
+    return new Promise<void>((resolve, reject) => {
+      AuthAPI.logout()
+        .then(() => {
+          location.reload(); // 清空路由
+          resolve();
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
 
   // remove token
   function resetToken() {
@@ -77,8 +77,8 @@ export const useUserStore = defineStore("user", () => {
 
   return {
     user,
-    // login,
-    // getUserInfo,
+    login,
+    getUserInfo,
     // logout,
     resetToken,
   };
