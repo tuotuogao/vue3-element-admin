@@ -24,7 +24,7 @@
       </div>
     </div>
     <!-- 登录表单 -->
-    <div class="login-content">      
+    <div class="login-content">
       <div class="login-image">
         <el-image :src="loginImage" style="width: 210px; height: 210px" />
       </div>
@@ -103,7 +103,6 @@
                   show-password
                   @keyup="checkCapslock"
                   @keyup.enter="handleLoginSubmit"
-
                 />
               </div>
             </el-form-item>
@@ -113,13 +112,12 @@
             <div class="input-wrapper">
               <svg-icon icon-class="captcha" class="mx-2" />
               <el-input
-              v-model="loginData.captchaCode"
+                v-model="loginData.captchaCode"
                 auto-complete="off"
                 size="large"
                 :placeholder="$t('login.captchaCode')"
                 class="flex-1"
                 @keyup.enter="handleLoginSubmit"
-
               />
               <el-image
                 :src="captchaBase64"
@@ -138,18 +136,16 @@
             </el-link>
           </div>
 
-          
-            <!-- 登录按钮 -->
-            <el-button
-              :loading="loading"
-              type="primary"
-              size="large"
-              class="w-full"
-              @click.prevent="handleLoginSubmit"
-            >
-              {{ $t("login.login") }}
-            </el-button>
-          
+          <!-- 登录按钮 -->
+          <el-button
+            :loading="loading"
+            type="primary"
+            size="large"
+            class="w-full"
+            @click.prevent="handleLoginSubmit"
+          >
+            {{ $t("login.login") }}
+          </el-button>
 
           <el-divider>
             <span class="text-12px">{{ $t("login.otherLoginMethods") }}</span>
@@ -271,19 +267,19 @@ const loginRules = computed(() => {
         trigger: "blur",
       },
     ],
-    captchaCode: [
-      {
-        required: true,
-        trigger: "blur",
-        message: t("login.message.captchaCode.required"),
-      },
-    ],
+    // captchaCode: [
+    //   {
+    //     required: true,
+    //     trigger: "blur",
+    //     message: t("login.message.captchaCode.required"),
+    //   },
+    // ],
   };
 });
 /** 获取验证码 */
 function getCaptcha() {
   AuthAPI.getCaptcha().then((data) => {
-    console.log(data)
+    // console.log(data)
     loginData.value.captchaKey = data.captchaKey;
     captchaBase64.value = data.captchaBase64;
   });
@@ -294,13 +290,18 @@ function handleLoginSubmit() {
   loginFormRef.value?.validate((valid: boolean) => {
     if (valid) {
       loading.value = true;
-      userStore.login(loginData.value)
+      userStore
+        .login(loginData.value)
         .then(() => {
           const { path, queryParams } = parseRedirect();
+          // console.log("到这了");
+          // console.log("Query Params:", queryParams);
           router.push({ path: path, query: queryParams });
+          // router.push("/dashboard");
         })
         .catch(() => {
           getCaptcha();
+
         })
         .finally(() => {
           loading.value = false;

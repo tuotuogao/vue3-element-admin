@@ -5,20 +5,73 @@ import {
   type RouteRecordRaw,
 } from "vue-router";
 
-import login from "../views/login/index.vue"
+export const Layout = () => import("@/Layout/index.vue");
+
 export const constantRoutes:RouteRecordRaw[]=[
     {
-        path: "/",
-        name:"login",
-        component: login,
-        // meta: { hidden: true },    
+      // path是对应的路径，component是相对的组件，name是路由名称
+        path: "/redirect",
+        component: Layout,
+        meta: { hidden: true },
+        children:[
+          {
+            path: "/redirect/:path(.*)",
+            // 使用函数导入可以实现路由懒加载，解决首次加载慢的问题
+            component: () => import("@/views/redirect/index.vue"),
+          },
+        ]    
       },
       {
-        path:'/layout',
-        name:'layout',
-        component: ()=>import("@/views/layout/index.vue"),
+        path: "/login",
+        component: () => import("@/views/login/index.vue"),
+        meta: { hidden: true },
+      },
+      {
+        path:"/",
+        name:"/",
+        component: Layout,
+        redirect: "/dashboard",
+        children: [
+          {
+            path: "dashboard",
+            component: () => import("@/views/dashboard/index.vue"),
+
+            name: "Dashboard",
+            meta: {
+              title: "dashboard",
+              icon: "homepage",
+              affix: true,
+              keepAlive: true,
+            },
+          },
+          {
+            path: "401",
+            component: () => import("@/views/error/401.vue"),
+            meta: { hidden: true },
+          },
+          {
+            path: "404",
+            component: () => import("@/views/error/404.vue"),
+            meta: { hidden: true },
+          },
+          // {
+          //   path: "profile",
+          //   name: "Profile",
+          //   component: () => import("@/views/profile/index.vue"),
+          //   meta: { title: "个人中心", icon: "user", hidden: true },
+          // },
+          // {
+          //   path: "myNotice",
+          //   name: "MyNotice",
+          //   component: () => import("@/views/system/notice/my-notice.vue"),
+          //   meta: { title: "我的通知", icon: "user", hidden: true },
+          // },
+        ],
+          
       }
+    
 ]
+// 创建路由
 const router = createRouter({
     history: createWebHashHistory(),
     routes: constantRoutes,
