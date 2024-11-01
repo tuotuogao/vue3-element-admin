@@ -6,13 +6,36 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint:eslint": "eslint --fix ./src"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{cjs,json}": [
+      "prettier --write"
+    ],
+    "*.{vue,html}": [
+      "eslint --fix",
+      "prettier --write",
+      "stylelint --fix"
+    ],
+    "*.{scss,css}": [
+      "stylelint --fix",
+      "prettier --write"
+    ],
+    "*.md": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "@vueuse/core": "^10.11.1",
     "axios": "^1.7.7",
     "element-plus": "^2.8.5",
+    "path-browserify": "^1.0.1",
     "path-to-regexp": "^6.3.0",
     "pinia": "^2.2.4",
     "qs": "^6.13.0",
@@ -23,13 +46,19 @@
     "vue3-element-gmt": "file:"
   },
   "devDependencies": {
+    "@eslint/js": "^9.13.0",
     "@types/node": "^22.7.6",
+    "@types/path-browserify": "^1.0.3",
     "@types/qs": "6.9.16",
     "@vitejs/plugin-vue": "^5.1.4",
+    "eslint": "^9.13.0",
+    "eslint-plugin-vue": "^9.30.0",
     "fast-glob": "^3.2.11",
+    "globals": "^15.11.0",
     "postcss": "8.4.47",
     "sass": "^1.79.5",
     "typescript": "5.5.4",
+    "typescript-eslint": "^8.12.2",
     "unocss": "^0.63.4",
     "unplugin-auto-import": "^0.18.3",
     "unplugin-icons": "^0.19.3",
