@@ -16,6 +16,7 @@ export const usePermissionStore = defineStore("permission", () => {
    * 生成动态路由
    */
   function generateRoutes() {
+    console.log('generateRoutes called');
     return new Promise<RouteRecordRaw[]>((resolve, reject) => {
       MenuAPI.getRoutes()
         .then((data) => {

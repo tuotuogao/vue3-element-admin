@@ -23,6 +23,7 @@
 </template>
 
 <script lang="ts" setup>
+
 import path from "path-browserify"; // 第三方库
 import { useSettingsStore } from "@/store"; // 内部模块
 import { useAppStore } from "@/store/modules/app";
@@ -30,7 +31,9 @@ import { isExternal } from "@/utils/index"; // 工具函数
 import variables from "@/styles/variables.module.scss"; // 样式
 import { LayoutEnum } from "@/enums/LayoutEnum"; // 枚举
 import type { MenuInstance } from "element-plus"; // 类型
-
+import { ref } from 'vue'; 
+import { useRoute } from 'vue-router';
+import { computed, watch } from 'vue';
 // 定义组件 props
 const props = defineProps({
   menuList: {
@@ -88,6 +91,11 @@ const handleClose = (index: string) => {
     (item) => item !== index
   );
 };
+// 在组件挂载时打印 menuList
+onMounted(() => {
+  console.log('初始的菜单数据:', props.menuList);
+});
+
 
 // 监听菜单模式变化，横向时关闭所有菜单
 watch(
@@ -98,4 +106,5 @@ watch(
     }
   }
 );
+
 </script>

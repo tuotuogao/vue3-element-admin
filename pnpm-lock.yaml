@@ -11,6 +11,9 @@ importers:
       '@element-plus/icons-vue':
         specifier: ^2.3.1
         version: 2.3.1(vue@3.5.12(typescript@5.5.4))
+      '@stomp/stompjs':
+        specifier: ^7.0.0
+        version: 7.0.0
       '@vueuse/core':
         specifier: ^10.11.1
         version: 10.11.1(vue@3.5.12(typescript@5.5.4))
@@ -726,6 +729,9 @@ packages:
     resolution: {integrity: sha512-fbMkAF7fufku0N2dE5TBXcNlg0pt0cJue4xBRE2Qc5Vqikxr4VCgKj/ht6SMdFcOacVA9rqF70APJ8RN/4vMJw==}
     cpu: [x64]
     os: [win32]
+
+  '@stomp/stompjs@7.0.0':
+    resolution: {integrity: sha512-fGdq4wPDnSV/KyOsjq4P+zLc8MFWC3lMmP5FBgLWKPJTYcuCbAIrnRGjB7q2jHZdYCOD5vxLuFoKIYLy5/u8Pw==}
 
   '@sxzz/popperjs-es@2.11.7':
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
@@ -3242,6 +3248,8 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.24.0':
     optional: true
 
+  '@stomp/stompjs@7.0.0': {}
+
   '@sxzz/popperjs-es@2.11.7': {}
 
   '@trysound/sax@0.2.0': {}
@@ -5686,9 +5694,11 @@ snapshots:
   vue3-element-gmt@file:(typescript@5.5.4):
     dependencies:
       '@element-plus/icons-vue': 2.3.1(vue@3.5.12(typescript@5.5.4))
+      '@stomp/stompjs': 7.0.0
       '@vueuse/core': 10.11.1(vue@3.5.12(typescript@5.5.4))
       axios: 1.7.7
       element-plus: 2.8.6(vue@3.5.12(typescript@5.5.4))
+      path-browserify: 1.0.1
       path-to-regexp: 6.3.0
       pinia: 2.2.4(typescript@5.5.4)(vue@3.5.12(typescript@5.5.4))
       qs: 6.13.0

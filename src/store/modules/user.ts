@@ -79,7 +79,7 @@ export const useUserStore = defineStore("user", () => {
     user,
     login,
     getUserInfo,
-    // logout,
+    logout,
     resetToken,
   };
 });

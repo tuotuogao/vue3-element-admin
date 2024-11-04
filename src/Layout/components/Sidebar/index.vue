@@ -18,9 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { useSettingsStore } from "@/store";
-import { useAppStore } from "@/store/modules/app";
-import { usePermissionStore } from "@/store/modules/permission";
+import { computed } from 'vue'
+import { useSettingsStore, usePermissionStore, useAppStore } from "@/store";
 import { LayoutEnum } from "@/enums/LayoutEnum";
 
 const appStore = useAppStore();

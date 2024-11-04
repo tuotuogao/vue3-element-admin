@@ -9,6 +9,7 @@ import defaultSettings from './settings';
 // console.log(defaultSettings);
 import router from '@/router';
 
+
 const app = createApp(App);
 const pinia = createPinia();
 

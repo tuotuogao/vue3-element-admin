@@ -57,14 +57,12 @@
 </template>
 
 <script setup lang="ts">
-import {  useSettingsStore } from "@/store";
-import { useAppStore } from "@/store/modules/app";
-import { usePermissionStore } from "@/store/modules/permission";
-
+import { useAppStore, useSettingsStore, usePermissionStore } from "@/store";
 import defaultSettings from "@/settings";
 import { DeviceEnum } from "@/enums/DeviceEnum";
 import { LayoutEnum } from "@/enums/LayoutEnum";
-
+import { useRoute } from "vue-router";
+import { useWindowSize } from "@vueuse/core";
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
 const permissionStore = usePermissionStore();
