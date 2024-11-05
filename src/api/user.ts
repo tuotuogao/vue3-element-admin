@@ -372,7 +372,7 @@ export interface MobileBindingForm {
 }
 
 /** 修改邮箱表单 */
-export interface EmailBindingForm {
+ export interface EmailBindingForm {
   /** 邮箱 */
   email?: string;
   /** 验证码 */
