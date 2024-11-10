@@ -24,6 +24,7 @@
 
 <script lang="ts" setup>
 
+
 import path from "path-browserify"; // 第三方库
 import { useSettingsStore } from "@/store"; // 内部模块
 import { useAppStore } from "@/store/modules/app";
@@ -92,9 +93,9 @@ const handleClose = (index: string) => {
   );
 };
 // 在组件挂载时打印 menuList
-onMounted(() => {
-  console.log('初始的菜单数据:', props.menuList);
-});
+// onMounted(() => {
+//   console.log('初始的菜单数据:', props.menuList);
+// });
 
 
 // 监听菜单模式变化，横向时关闭所有菜单

@@ -43,6 +43,7 @@ import { useAppStore } from "@/store/modules/app";
 import { usePermissionStore } from "@/store/modules/permission";
 import { translateRouteTitle } from "@/utils/i18n";
 import variables from "@/styles/variables.module.scss";
+import { useRouter,useRoute } from "vue-router";
 
 /**
  * 定义状态：先定义 reactive、ref 或 computed 状态

@@ -2,7 +2,7 @@ import type { RouteRecordRaw } from "vue-router";
 import { constantRoutes } from "@/router";
 import { store } from "@/store";
 import MenuAPI, { type RouteVO } from "@/api/menu";
-
+import {defineStore} from "pinia"
 const modules = import.meta.glob("../../views/**/**.vue");
 const Layout = () => import("@/Layout/index.vue");
 
