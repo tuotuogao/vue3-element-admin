@@ -143,7 +143,7 @@ function resolvePath(routePath: string) {
   return fullPath;
 }
 
-console.log('菜单项数据:', props.item)
+// console.log('菜单项数据:', props.item)
 </script>
 
 <style lang="scss">

@@ -8,6 +8,13 @@ import "virtual:svg-icons-register";
 import defaultSettings from './settings';
 // console.log(defaultSettings);
 import router from '@/router';
+import "@/styles/index.scss";
+// 本地SVG图标
+import "virtual:svg-icons-register";
+
+// 样式
+import "element-plus/theme-chalk/dark/css-vars.css";
+
 
 
 const app = createApp(App);
