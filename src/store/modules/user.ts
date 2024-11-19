@@ -3,6 +3,7 @@ import UserAPI, { type UserInfo } from "@/api/user";
 import { resetRouter } from "@/router";
 import { store } from "@/store";
 import { setToken, removeToken } from "@/utils/auth";
+import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", () => {
   const user = ref<UserInfo>({
