@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useUserStore } from "@/store/modules/user";
 import StatsAPI, { VisitStatsVO } from "@/api/log";
-
+import { ref, onMounted } from "vue";
+import router from "@/router";
+import NoticeAPI, { NoticePageVO } from "@/api/notice";
 const userStore = useUserStore();
 // 定义关于时间的问候语。。。。这里补充一个computed属性
 const greetings = ref("晨起披衣出草堂，轩窗已自喜微凉🌅");
@@ -40,7 +42,7 @@ const getGrowthRateClass = (growthRate: number): string => {
     return "color-[--el-color-info]";
   }
 };
-const visitStatsList = ref<VisitStats[] | null>(Array(3).fill({}));
+
 interface VisitStats {
   title: string;
   icon: string;
@@ -52,31 +54,40 @@ interface VisitStats {
   todayCount: number;
   totalCount: number;
 }
+
+const visitStatsList = ref<VisitStats[]>([]);
+const visitStatsLoading = ref(true);
+
 // 加载访问统计数据
 const loadVisitStatsData = async () => {
-  const list: VisitStatsVO[] = await StatsAPI.getVisitStats();
+  try {
+    const list: VisitStatsVO[] = await StatsAPI.getVisitStats();
 
-  if (list) {
-    const tagTypes: ("primary" | "success" | "warning")[] = [
-      "primary",
-      "success",
-      "warning",
-    ];
-    const transformedList: VisitStats[] = list.map((item, index) => ({
-      title: item.title,
-      icon: getVisitStatsIcon(item.type),
-      tagType: tagTypes[index % tagTypes.length],
-      growthRate: item.growthRate,
-      granularity: "日",
-      todayCount: item.todayCount,
-      totalCount: item.totalCount,
-    }));
-    visitStatsList.value = transformedList;
-    visitStatsLoading.value = false;
+    if (list) {
+      const tagTypes: ("primary" | "success" | "warning")[] = [
+        "primary",
+        "success",
+        "warning",
+      ];
+      const transformedList: VisitStats[] = list.map((item, index) => ({
+        title: item.title,
+        icon: getVisitStatsIcon(item.type),
+        tagType: tagTypes[index % tagTypes.length],
+        growthRate: item.growthRate,
+        granularity: "日",
+        todayCount: item.todayCount,
+        totalCount: item.totalCount,
+      }));
+      console.log(transformedList); // 添加这一行进行调试
+      visitStatsList.value = transformedList;
+      visitStatsLoading.value = false;
+    }
+  } catch (error) {
+    console.error("Failed to load visit stats:", error);
+    visitStatsLoading.value = false; // 确保即使失败也能关闭骨架屏
   }
 };
 
-const visitStatsLoading = ref(true);
 /** 格式化增长率 */
 const formatGrowthRate = (growthRate: number): string => {
   if (growthRate === 0) {
@@ -88,6 +99,7 @@ const formatGrowthRate = (growthRate: number): string => {
     .replace(/\.?0+$/, "");
   return formattedRate + "%";
 };
+
 /** 获取访问统计图标 */
 const getVisitStatsIcon = (type: string) => {
   switch (type) {
@@ -101,6 +113,19 @@ const getVisitStatsIcon = (type: string) => {
       return "pv";
   }
 };
+const notices = ref<NoticePageVO[]>([]);
+const noticeDetailRef=ref();
+onMounted(() => {
+  loadVisitStatsData();
+});
+
+function viewMoreNotice() {
+  router.push({path:"/myNotice"});
+}
+// 阅读通知公告
+function viewNoticeDetail(id: string) {
+  noticeDetailRef.value.openNotice(id);
+}
 </script>
 
 <template>
@@ -200,7 +225,7 @@ const getVisitStatsIcon = (type: string) => {
               </div>
             </el-card>
           </template>
-          <template v-if="!visitStatsLoading">
+          <template v-if="!visitStatsLoading && visitStatsList.length > 0">
             <el-card shadow="never">
               <template #header>
                 <div class="flex-x-between">
@@ -241,7 +266,54 @@ const getVisitStatsIcon = (type: string) => {
               </div>
             </el-card>
           </template>
+          <template
+            v-else-if="!visitStatsLoading && visitStatsList.length === 0"
+          >
+            <el-empty description="暂无数据"></el-empty>
+          </template>
         </el-skeleton>
+      </el-col>
+    </el-row>
+
+    <!-- 趋势图 -->
+    <el-row :gutter="10" class="mt-5">
+      <el-col :xs="24" :span="16">
+        <VisitTrend id="VisitTrend" width="100%" height="300px" />
+      </el-col>
+      <el-col :xs="24" :span="8">
+        <el-card>
+          <template #header>
+            <div class="flex-x-between">
+              <div class="flex-y-center">
+                通知公告
+                <el-icon class="ml-1"><Notification /></el-icon>
+              </div>
+              <el-link type="primary">
+                <span class="text-xs" @click="viewMoreNotice">查看更多</span>
+                <el-icon class="text-xs"><ArrowRight /></el-icon>
+              </el-link>
+            </div>
+          </template>
+
+          <el-scrollbar height="400px">
+            <div
+              v-for="(item, index) in notices"
+              :key="index"
+              class="flex-y-center py-3"
+            >
+              <DictLabel v-model="item.type" code="notice_type" size="small" />
+              <el-text
+                truncated
+                class="!mx-2 flex-1 !text-xs !text-[var(--el-text-color-secondary)]"
+              >
+                {{ item.title }}
+              </el-text>
+              <el-link @click="viewNoticeDetail(item.id)">
+                <el-icon class="text-sm"><View /></el-icon>
+              </el-link>
+            </div>
+          </el-scrollbar>
+        </el-card>
       </el-col>
     </el-row>
   </div>
@@ -256,3 +328,9 @@ const getVisitStatsIcon = (type: string) => {
   border: 0;
 }
 </style>
+
+
+
+
+
+
