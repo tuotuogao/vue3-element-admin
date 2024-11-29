@@ -12,7 +12,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: "/redirect",
     component: Layout,
-    meta: { hidden: true },
+    meta: { hidden: true },   
     children: [
       {
         path: "/redirect/:path(.*)",

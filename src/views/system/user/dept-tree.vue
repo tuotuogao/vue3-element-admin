@@ -1,47 +1,68 @@
-<!-- 
-
+<!-- 部门树 -->
 <template>
   <el-card shadow="never">
-    <el-input>
-      <template>
+    <el-input v-model="deptName" placeholder="部门名称" clearable>
+      <template #prefix>
         <el-icon><Search /></el-icon>
       </template>
     </el-input>
-    <el-tree ref="deptTreeRef" class="mt2" :data="deptList"/>
+
+    <el-tree
+      ref="deptTreeRef"
+      class="mt-2"
+      :data="deptList"
+      :props="{ children: 'children', label: 'label', disabled: '' }"
+      :expand-on-click-node="false"
+      :filter-node-method="handleFilter"
+      default-expand-all
+      @node-click="handleNodeClick"
+    />
   </el-card>
 </template>
+
 <script setup lang="ts">
 import DeptAPI from "@/api/dept";
-import { ref, onBeforeMount } from "vue";
-// import { OptionType,ElTree } from "@/types/global";
-// const props = defineProps({
-//   modelValue: {
-//     type: [Number],
-//     default: undefined,
-//   },
-// });
+const props = defineProps({
+  modelValue: {
+    type: [Number],
+    default: undefined,
+  },
+});
 
 const deptList = ref<OptionType[]>(); // 部门列表
-// const deptTreeRef = ref(ElTree); // 部门树
-const deptName = ref(); // 部门名称 
-onBeforeMount(()=>{
-  DeptAPI.getList
-})
-onMounted(async () => {
-  try {
-    const response = await DeptAPI.getList(queryParams);
-    deptList.value = response.data; // 假设后端返回的数据中包含一个data属性，它是DeptVO[]类型的
-  } catch (error) {
-    console.error('获取部门列表时出错:', error);
-    // 可以在这里处理错误，比如显示错误消息
+const deptTreeRef = ref(ElTree); // 部门树
+const deptName = ref(); // 部门名称
+
+const emits = defineEmits(["node-click"]);
+
+const deptId = useVModel(props, "modelValue", emits);
+
+watchEffect(
+  () => {
+    deptTreeRef.value.filter(deptName.value);
+  },
+  {
+    flush: "post", // watchEffect会在DOM挂载或者更新之前就会触发，此属性控制在DOM元素更新后运行
   }
+);
+
+/** 部门筛选 */
+function handleFilter(value: string, data: any) {
+  if (!value) {
+    return true;
+  }
+  return data.label.indexOf(value) !== -1;
+}
+
+/** 部门树节点 Click */
+function handleNodeClick(data: { [key: string]: any }) {
+  deptId.value = data.value;
+  emits("node-click");
+}
+
+onBeforeMount(() => {
+  DeptAPI.getOptions().then((data) => {
+    deptList.value = data;
+  });
 });
 </script>
-<style lang="scss" scoped></style> -->
-<script setup lang="ts"></script>
-
-<template>
-  <div>test</div>
-</template>
-
-<style lang="scss" scoped></style>

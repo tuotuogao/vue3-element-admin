@@ -3,8 +3,12 @@
   <div class="app-container">
     <el-row :gutter="20">
       <!-- 部门树 -->
-      <el-col :lg="4" :xs="24" class="mb-[12px]">
+      <!-- <el-col :lg="4" :xs="24" class="mb-[12px]">
         <DeptTree v-model="queryParams.deptId" @node-click="handleQuery" />
+      </el-col> -->
+      <el-col :lg="4" :xs="24" class="mb-[12px]">
+        <!-- 这是部门树的内容 -->
+        <DeptTree v-model="queryParams.deptId" @node-click="handleQuery"></DeptTree>
       </el-col>
 
       <!-- 用户列表 -->
@@ -289,10 +293,10 @@
     </el-drawer>
 
     <!-- 用户导入弹窗 -->
-    <UserImport
+    <!-- <UserImport
       v-model:visible="importDialogVisible"
       @import-success="handleUserImportSuccess"
-    />
+    /> -->
   </div>
 </template>
 
@@ -306,8 +310,8 @@ import UserAPI, { UserForm, UserPageQuery, UserPageVO } from "@/api/user";
 import DeptAPI from "@/api/dept";
 import RoleAPI from "@/api/role";
 
-// import DeptTree from "@system/user/dept-tree.vue";
-import UserImport from "@system/user/import.vue";
+import DeptTree from "@/views/system/user/dept-tree.vue"
+// import UserImport from "@system/user/import.vue";
 import { ElForm, ElMessage, ElMessageBox } from "element-plus";
 import { useThrottleFn } from "@vueuse/core";
 
